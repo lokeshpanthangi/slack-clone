@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useChat } from './ChatContext';
 import { useTheme } from '../ThemeProvider';
-import { Hash, Lock, MessageCircle, Users, Settings, Search, Plus, Moon, Sun } from 'lucide-react';
+import { Hash, Lock, MessageCircle, Users, Settings, Search, Plus, Moon, Sun, Home, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserStatus } from './UserStatus';
@@ -26,29 +26,70 @@ export const Sidebar = () => {
     <div className="w-64 bg-sidebar flex flex-col border-r border-sidebar-border">
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
-        <h1 className="text-lg font-bold text-sidebar-foreground">TeamChat</h1>
-        <div className="flex items-center justify-between mt-2">
-          <UserStatus user={currentUser} />
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+            <span className="text-sidebar font-bold text-lg">M</span>
+          </div>
+          <h1 className="text-lg font-bold text-sidebar-foreground">MisogiAI</h1>
+        </div>
+        <div className="flex items-center justify-between">
+          <UserStatus user={currentUser} showName />
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <Bell className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="h-8 w-8 p-0 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="px-3 py-2">
+        <div className="space-y-1">
           <Button
             variant="ghost"
-            size="sm"
-            onClick={toggleTheme}
-            className="text-sidebar-foreground hover:bg-sidebar-accent"
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
           >
-            {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            <Home className="w-4 h-4 mr-3" />
+            Home
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            <MessageCircle className="w-4 h-4 mr-3" />
+            DMs
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            <Bell className="w-4 h-4 mr-3" />
+            Activity
           </Button>
         </div>
       </div>
 
       {/* Search */}
-      <div className="p-3">
+      <div className="px-3 py-2">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-sidebar-foreground/60" />
           <Input
-            placeholder="Search channels..."
+            placeholder="Search MisogiAI"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-sidebar-accent border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/60"
+            className="pl-10 bg-sidebar-accent/50 border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/60"
           />
         </div>
       </div>
@@ -57,7 +98,7 @@ export const Sidebar = () => {
       <div className="flex-1 overflow-y-auto">
         <div className="px-3 py-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
+            <span className="text-sm font-semibold text-sidebar-foreground/80">
               Channels
             </span>
             <Button
@@ -89,8 +130,8 @@ export const Sidebar = () => {
 
         <div className="px-3 py-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
-              Direct Messages
+            <span className="text-sm font-semibold text-sidebar-foreground/80">
+              Direct messages
             </span>
             <Button
               variant="ghost"
@@ -120,19 +161,25 @@ export const Sidebar = () => {
             ))}
         </div>
 
+        {/* Apps Section */}
         <div className="px-3 py-2">
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="w-4 h-4 text-sidebar-foreground/70" />
-            <span className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
-              Team ({users.length})
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold text-sidebar-foreground/80">
+              Apps
             </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <Plus className="w-3 h-3" />
+            </Button>
           </div>
           
-          {users.map(user => (
-            <div key={user.id} className="flex items-center gap-2 px-2 py-1.5">
-              <UserStatus user={user} showName />
-            </div>
-          ))}
+          <button className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
+            <Plus className="w-4 h-4" />
+            <span className="truncate">Add apps</span>
+          </button>
         </div>
       </div>
 
@@ -142,7 +189,7 @@ export const Sidebar = () => {
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
         >
-          <Settings className="w-4 h-4 mr-2" />
+          <Settings className="w-4 h-4 mr-3" />
           Preferences
         </Button>
       </div>

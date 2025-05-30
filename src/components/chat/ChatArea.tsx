@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useChat } from './ChatContext';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
-import { Hash, Lock, MessageCircle, Users, Phone, Video, Settings } from 'lucide-react';
+import { Hash, Lock, MessageCircle, Users, Phone, Video, Settings, Info, Star, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const ChatArea = () => {
@@ -32,33 +32,44 @@ export const ChatArea = () => {
   return (
     <div className="flex-1 flex flex-col bg-background">
       {/* Header */}
-      <div className="h-14 px-4 flex items-center justify-between border-b border-border bg-card">
+      <div className="h-14 px-4 flex items-center justify-between border-b border-border bg-background">
         <div className="flex items-center gap-3">
           {getChannelIcon()}
           <div>
-            <h2 className="font-semibold text-card-foreground">{activeChannel.name}</h2>
+            <h2 className="font-semibold text-foreground flex items-center gap-2">
+              {activeChannel.name}
+              {activeChannel.type === 'dm' && (
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              )}
+            </h2>
             {activeChannel.type === 'channel' && (
               <p className="text-xs text-muted-foreground">{memberCount} members</p>
+            )}
+            {activeChannel.type === 'dm' && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>Active</span>
+              </div>
             )}
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {activeChannel.type === 'dm' && (
             <>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 <Phone className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                 <Video className="w-4 h-4" />
               </Button>
             </>
           )}
-          <Button variant="ghost" size="sm">
-            <Users className="w-4 h-4" />
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Star className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm">
-            <Settings className="w-4 h-4" />
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Info className="w-4 h-4" />
           </Button>
         </div>
       </div>
@@ -69,7 +80,7 @@ export const ChatArea = () => {
       </div>
 
       {/* Message Input */}
-      <div className="border-t border-border bg-card p-4">
+      <div className="border-t border-border bg-background p-4">
         <MessageInput />
       </div>
     </div>

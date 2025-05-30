@@ -11,7 +11,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark'); // Default to dark theme
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme;
@@ -23,6 +23,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     localStorage.setItem('theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
+    // Force dark theme for the Slack-like purple color scheme
+    document.documentElement.classList.add('dark');
   }, [theme]);
 
   const toggleTheme = () => {
