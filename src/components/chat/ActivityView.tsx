@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, Hash } from 'lucide-react';
 
 export const ActivityView = () => {
   const [activeTab, setActiveTab] = useState('all');
