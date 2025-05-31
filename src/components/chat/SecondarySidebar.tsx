@@ -28,14 +28,13 @@ export const SecondarySidebar: React.FC<SecondarySidebarProps> = ({
   const channelItems = channels.filter(c => c.type === 'channel');
   const dmItems = channels.filter(c => c.type === 'dm');
 
-  if (activeSection !== 'dms') {
-    return (
-      <div className="w-64 bg-purple-800 text-white border-r border-purple-700">
-        <div className="p-4">
-          <h2 className="text-lg font-semibold">{workspaceName}</h2>
-        </div>
-      </div>
-    );
+  // For home section, automatically select general channel
+  if (activeSection === 'home' && activeChannelId !== 'general') {
+    setActiveChannel('general');
+  }
+
+  if (activeSection === 'activity' || activeSection === 'people') {
+    return null;
   }
 
   return (
@@ -56,28 +55,27 @@ export const SecondarySidebar: React.FC<SecondarySidebarProps> = ({
 
       {/* Navigation Sections */}
       <div className="flex-1 overflow-y-auto">
-        {/* Direct Messages Section */}
+        {/* Quick Actions */}
         <div className="p-2">
           <div className="space-y-1 mb-4">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-purple-200 hover:bg-purple-700"
+            <div
+              className="w-full justify-start text-purple-200 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors"
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-huddles'))}
             >
               🏠 Huddles
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-purple-200 hover:bg-purple-700"
+            </div>
+            <div
+              className="w-full justify-start text-purple-200 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors"
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-drafts'))}
             >
               📝 Drafts & sent
-            </Button>
+            </div>
           </div>
 
           {/* Channels */}
           <div className="mb-4">
-            <Button
-              variant="ghost"
-              className="w-full justify-between text-sm font-medium text-purple-200 hover:bg-purple-700 p-2"
+            <div
+              className="w-full justify-between text-sm font-medium text-purple-200 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors flex items-center"
               onClick={() => setIsChannelsExpanded(!isChannelsExpanded)}
             >
               <span className="flex items-center gap-2">
@@ -88,60 +86,53 @@ export const SecondarySidebar: React.FC<SecondarySidebarProps> = ({
                 )}
                 Channels
               </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-5 w-5 p-0 hover:bg-purple-600"
+              <div
+                className="h-5 w-5 p-0 hover:bg-purple-600 rounded flex items-center justify-center"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsChannelModalOpen(true);
                 }}
               >
                 <Plus className="w-3 h-3" />
-              </Button>
-            </Button>
+              </div>
+            </div>
             
             {isChannelsExpanded && (
               <div className="ml-4 space-y-1">
                 {channelItems.map((channel) => (
-                  <Button
+                  <div
                     key={channel.id}
-                    variant="ghost"
-                    className={`w-full justify-start text-sm p-2 ${
+                    className={`w-full justify-start text-sm p-2 rounded cursor-pointer transition-colors flex items-center gap-2 ${
                       activeChannelId === channel.id
                         ? 'bg-purple-600 text-white'
                         : 'text-purple-200 hover:bg-purple-700'
                     }`}
                     onClick={() => setActiveChannel(channel.id)}
                   >
-                    <span className="flex items-center gap-2">
-                      {channel.isPrivate ? (
-                        <Lock className="w-4 h-4" />
-                      ) : (
-                        <Hash className="w-4 h-4" />
-                      )}
-                      {channel.name}
-                    </span>
-                  </Button>
+                    {channel.isPrivate ? (
+                      <Lock className="w-4 h-4" />
+                    ) : (
+                      <Hash className="w-4 h-4" />
+                    )}
+                    {channel.name}
+                  </div>
                 ))}
                 
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-sm text-purple-300 hover:bg-purple-700 p-2"
+                <div
+                  className="w-full justify-start text-sm text-purple-300 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors flex items-center gap-2"
                   onClick={() => setIsChannelModalOpen(true)}
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-4 h-4" />
                   Add channels
-                </Button>
+                </div>
               </div>
             )}
           </div>
 
           {/* Direct Messages */}
           <div className="mb-4">
-            <Button
-              variant="ghost"
-              className="w-full justify-between text-sm font-medium text-purple-200 hover:bg-purple-700 p-2"
+            <div
+              className="w-full justify-between text-sm font-medium text-purple-200 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors flex items-center"
               onClick={() => setIsDMsExpanded(!isDMsExpanded)}
             >
               <span className="flex items-center gap-2">
@@ -152,33 +143,30 @@ export const SecondarySidebar: React.FC<SecondarySidebarProps> = ({
                 )}
                 Direct messages
               </span>
-            </Button>
+            </div>
             
             {isDMsExpanded && (
               <div className="ml-4 space-y-1">
                 {dmItems.map((dm) => {
                   const user = users.find(u => dm.name.includes(u.name));
                   return (
-                    <Button
+                    <div
                       key={dm.id}
-                      variant="ghost"
-                      className={`w-full justify-start text-sm p-2 ${
+                      className={`w-full justify-start text-sm p-2 rounded cursor-pointer transition-colors flex items-center gap-2 ${
                         activeChannelId === dm.id
                           ? 'bg-purple-600 text-white'
                           : 'text-purple-200 hover:bg-purple-700'
                       }`}
                       onClick={() => setActiveChannel(dm.id)}
                     >
-                      <span className="flex items-center gap-2">
-                        <div className="relative">
-                          <span className="text-sm">{user?.avatar || '👤'}</span>
-                          {user?.status === 'online' && (
-                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-purple-800" />
-                          )}
-                        </div>
-                        {dm.name}
-                      </span>
-                    </Button>
+                      <div className="relative">
+                        <span className="text-sm">{user?.avatar || '👤'}</span>
+                        {user?.status === 'online' && (
+                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-purple-800" />
+                        )}
+                      </div>
+                      {dm.name}
+                    </div>
                   );
                 })}
               </div>
@@ -187,23 +175,17 @@ export const SecondarySidebar: React.FC<SecondarySidebarProps> = ({
 
           {/* Apps Section */}
           <div>
-            <Button
-              variant="ghost"
-              className="w-full justify-between text-sm font-medium text-purple-200 hover:bg-purple-700 p-2"
-            >
+            <div className="w-full justify-between text-sm font-medium text-purple-200 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors flex items-center">
               <span className="flex items-center gap-2">
                 <ChevronDown className="w-4 h-4" />
                 Apps
               </span>
-            </Button>
+            </div>
             <div className="ml-4 mt-1">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-sm text-purple-300 hover:bg-purple-700 p-2"
-              >
-                <Plus className="w-4 h-4 mr-2" />
+              <div className="w-full justify-start text-sm text-purple-300 hover:bg-purple-700 p-2 rounded cursor-pointer transition-colors flex items-center gap-2">
+                <Plus className="w-4 h-4" />
                 Add apps
-              </Button>
+              </div>
             </div>
           </div>
         </div>

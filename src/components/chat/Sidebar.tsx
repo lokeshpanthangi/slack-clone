@@ -4,7 +4,7 @@ import { MainSidebar } from './MainSidebar';
 import { SecondarySidebar } from './SecondarySidebar';
 
 export const Sidebar = () => {
-  const [activeSection, setActiveSection] = useState('dms');
+  const [activeSection, setActiveSection] = useState('home');
 
   return (
     <div className="flex">
@@ -12,7 +12,9 @@ export const Sidebar = () => {
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <SecondarySidebar activeSection={activeSection} />
+      {(activeSection === 'dms' || activeSection === 'home') && (
+        <SecondarySidebar activeSection={activeSection} />
+      )}
     </div>
   );
 };
