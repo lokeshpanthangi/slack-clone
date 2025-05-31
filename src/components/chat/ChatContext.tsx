@@ -34,14 +34,19 @@ interface ChatContextType {
   activeChannelId: string;
   messages: Record<string, Message[]>;
   users: User[];
+  workspaceName: string;
   setActiveChannel: (channelId: string) => void;
   sendMessage: (content: string) => void;
   addReaction: (messageId: string, emoji: string) => void;
+  addChannel: (channel: Channel) => void;
+  setWorkspaceName: (name: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [workspaceName, setWorkspaceNameState] = useState('MisogiAI');
+  
   const [currentUser] = useState<User>({
     id: '1',
     name: 'John Doe',
@@ -56,7 +61,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     { id: '4', name: 'Emma Wilson', avatar: '👩‍🔬', status: 'busy' },
   ]);
 
-  const [channels] = useState<Channel[]>([
+  const [channels, setChannels] = useState<Channel[]>([
     { id: 'general', name: 'general', type: 'channel' },
     { id: 'random', name: 'random', type: 'channel' },
     { id: 'development', name: 'development', type: 'channel', isPrivate: true },
@@ -156,6 +161,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   }, [activeChannelId, currentUser.id]);
 
+  const addChannel = useCallback((channel: Channel) => {
+    setChannels(prev => [...prev, channel]);
+    setMessages(prev => ({
+      ...prev,
+      [channel.id]: [],
+    }));
+  }, []);
+
+  const setWorkspaceName = useCallback((name: string) => {
+    setWorkspaceNameState(name);
+  }, []);
+
   return (
     <ChatContext.Provider value={{
       currentUser,
@@ -163,9 +180,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       activeChannelId,
       messages,
       users,
+      workspaceName,
       setActiveChannel,
       sendMessage,
       addReaction,
+      addChannel,
+      setWorkspaceName,
     }}>
       {children}
     </ChatContext.Provider>
