@@ -8,9 +8,14 @@ import { DMsListView } from '@/components/chat/DMsListView';
 import { ActivityView } from '@/components/chat/ActivityView';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ChatProvider } from '@/components/chat/ChatContext';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { AuthPage } from '@/components/auth/AuthPage';
+import { WorkspaceSelector } from '@/components/workspace/WorkspaceSelector';
 
 const Index = () => {
+  const { user, loading } = useAuth();
   const [currentView, setCurrentView] = useState('chat');
+  const [currentWorkspace, setCurrentWorkspace] = useState<any>(null);
 
   useEffect(() => {
     const handleNavigateToHuddles = () => setCurrentView('huddles');
@@ -34,6 +39,21 @@ const Index = () => {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPage />;
+  }
+
   const renderMainContent = () => {
     switch (currentView) {
       case 'drafts':
@@ -53,8 +73,26 @@ const Index = () => {
     <ThemeProvider>
       <ChatProvider>
         <div className="h-screen flex bg-background text-foreground">
-          <Sidebar />
-          {renderMainContent()}
+          <div className="flex flex-col">
+            <Sidebar />
+          </div>
+          <div className="flex-1 flex flex-col">
+            {currentWorkspace && (
+              <div className="bg-purple-800 text-white">
+                <WorkspaceSelector 
+                  onWorkspaceChange={setCurrentWorkspace}
+                />
+              </div>
+            )}
+            {!currentWorkspace && (
+              <div className="bg-purple-800 text-white">
+                <WorkspaceSelector 
+                  onWorkspaceChange={setCurrentWorkspace}
+                />
+              </div>
+            )}
+            {renderMainContent()}
+          </div>
         </div>
       </ChatProvider>
     </ThemeProvider>
